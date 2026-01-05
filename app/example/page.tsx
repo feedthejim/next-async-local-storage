@@ -1,3 +1,5 @@
+import { getRequestId } from "../request-id";
+
 interface Product {
   id: number;
   name: string;
@@ -8,6 +10,9 @@ interface Product {
 async function fetchProducts(): Promise<Product[]> {
   // Simulate API delay
   await new Promise((resolve) => setTimeout(resolve, 100));
+
+  const requestId = getRequestId();
+  console.log("Fetching products for request ID:", requestId);
   
   // Return mock data
   return [
