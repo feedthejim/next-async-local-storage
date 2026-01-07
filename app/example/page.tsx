@@ -41,7 +41,7 @@ export default withRequestContext(async function ExamplePage() {
 
   return (
     <main className="min-h-screen p-8">
-      <ClientDisplay requestId={requestId} userName={userName} flags={flags} />
+      <ClientDisplay />
 
       <div className="mb-8 p-4 bg-gray-100 rounded-lg">
         <h2 className="text-lg font-semibold mb-2">Server Component (sync access)</h2>

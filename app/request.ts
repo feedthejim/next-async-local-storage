@@ -1,4 +1,5 @@
-import { cache } from "react";
+import { cache, createElement } from "react";
+import { RequestContextProvider } from "./request-context";
 
 export interface FeatureFlags {
   darkMode: boolean;
@@ -84,11 +85,23 @@ export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
 }
 
 // HOC to wrap server components with request context preparation
+// Also provides client context for useRequestContext hook
 export function withRequestContext<P extends object>(
   Component: (props: P) => Promise<React.ReactNode>
 ) {
   return async function WrappedComponent(props: P) {
     await prepareRequestContext();
-    return Component(props);
+
+    const contextValue = {
+      requestId: getRequestId(),
+      userName: getUserName(),
+      featureFlags: getFeatureFlags(),
+    };
+
+    return createElement(
+      RequestContextProvider,
+      { value: contextValue },
+      await Component(props)
+    );
   };
 }
