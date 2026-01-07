@@ -37,14 +37,21 @@ async function fetchUserName(): Promise<string> {
   return "john.doe@example.com";
 }
 
-// Async prepare call - must be awaited in layout before accessing getters
-export async function prepareRequestContext(): Promise<void> {
+// Internal prepare function
+async function prepare(): Promise<void> {
   const ctx = getRequestContext();
+  if (ctx.requestId !== null) {
+    // Already prepared for this request
+    return;
+  }
   ctx.requestId = crypto.randomUUID();
   ctx.featureFlags = await fetchFeatureFlags();
   ctx.userName = await fetchUserName();
   console.log("Prepared request context:", ctx.requestId);
 }
+
+// Cached prepare call - idempotent per request, safe to call from layout AND pages
+export const prepareRequestContext = cache(prepare);
 
 // Synchronous getters - safe to call after prepareRequestContext()
 export function getRequestId(): string {
@@ -74,4 +81,14 @@ export function getUserName(): string {
 // Helper to check if a specific feature is enabled
 export function isFeatureEnabled(feature: keyof FeatureFlags): boolean {
   return getFeatureFlags()[feature];
+}
+
+// HOC to wrap server components with request context preparation
+export function withRequestContext<P extends object>(
+  Component: (props: P) => Promise<React.ReactNode>
+) {
+  return async function WrappedComponent(props: P) {
+    await prepareRequestContext();
+    return Component(props);
+  };
 }

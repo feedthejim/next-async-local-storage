@@ -1,4 +1,5 @@
 import {
+  withRequestContext,
   getRequestId,
   getFeatureFlags,
   getUserName,
@@ -29,10 +30,10 @@ async function fetchProducts(): Promise<Product[]> {
   ];
 }
 
-export default async function ExamplePage() {
+export default withRequestContext(async function ExamplePage() {
   const products = await fetchProducts();
 
-  // All these calls are synchronous - context was prepared in layout
+  // All these calls are synchronous - context was prepared by withRequestContext
   const requestId = getRequestId();
   const userName = getUserName();
   const flags = getFeatureFlags();
@@ -78,4 +79,4 @@ export default async function ExamplePage() {
       </div>
     </main>
   );
-}
+});
