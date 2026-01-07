@@ -1,4 +1,4 @@
-import { cache, createElement } from "react";
+import { cache } from "react";
 import { RequestContextProvider } from "./request-context";
 
 export interface FeatureFlags {
@@ -98,10 +98,10 @@ export function withRequestContext<P extends object>(
       featureFlags: getFeatureFlags(),
     };
 
-    return createElement(
-      RequestContextProvider,
-      { value: contextValue },
-      await Component(props)
+    return (
+      <RequestContextProvider value={contextValue}>
+        {await Component(props)}
+      </RequestContextProvider>
     );
   };
 }
