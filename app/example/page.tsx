@@ -5,6 +5,7 @@ import {
   getUserName,
   isFeatureEnabled,
 } from "../request";
+import { ClientDisplay } from "./client-display";
 
 interface Product {
   id: number;
@@ -40,8 +41,10 @@ export default withRequestContext(async function ExamplePage() {
 
   return (
     <main className="min-h-screen p-8">
+      <ClientDisplay requestId={requestId} userName={userName} flags={flags} />
+
       <div className="mb-8 p-4 bg-gray-100 rounded-lg">
-        <h2 className="text-lg font-semibold mb-2">Request Context (sync access)</h2>
+        <h2 className="text-lg font-semibold mb-2">Server Component (sync access)</h2>
         <p className="text-sm text-gray-600">Request ID: {requestId}</p>
         <p className="text-sm text-gray-600">User: {userName}</p>
         <div className="mt-2">
